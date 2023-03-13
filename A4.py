@@ -75,7 +75,7 @@ def part1():
     [h, w] = I.shape
     DoG = np.zeros([h, w, 3])
 
-    # TO - DO: Create DoG levels
+    # TODO: Create DoG levels
     DoG[:, :, 0] = filters.gaussian(I, sigmas[0]) - filters.gaussian(I, sigmas[1])
     DoG[:, :, 1] = filters.gaussian(I, sigmas[1]) - filters.gaussian(I, sigmas[2])
     DoG[:, :, 2] = filters.gaussian(I, sigmas[2]) - filters.gaussian(I, sigmas[3])
@@ -92,12 +92,11 @@ def part1():
     plt.show()
 
     # =========== 2. Obtain a rough estimate of blob center locations ===========
-    scatter_size = 40
+    scatter_size = 27.8
     scatter_col = 'r'
 
-    # TO - DO: Detect regional minima within the DoG volume. You can check out scipy.ndimage.filters.minimum_filter. 
-
-    local_minima = ...
+    # TODO: Detect regional minima within the DoG volume. You can check out scipy.ndimage.filters.minimum_filter.
+    local_minima = scipy.ndimage.minimum_filter(DoG, scatter_size) == DoG
 
     # Plot
     plt.figure()
@@ -106,37 +105,37 @@ def part1():
     plt.subplot(133), plt.imshow(local_minima[..., 2], cmap='jet')
     plt.show()
 
-    # TO - DO: Convert local_minima to a binary image A (Check the stackoverflow discussion linked on e-class for reference)
+    # TODO: Convert local_minima to a binary image A (Check the stackoverflow discussion linked on e-class for reference)
 
-    A = ...
+    A = img_as_ubyte(local_minima)
 
-    # TO - DO: Collapse this 3D binary image into a single channel image and assign to variable B (Check out np.sum)
+    # TODO: Collapse this 3D binary image into a single channel image and assign to variable B (Check out np.sum)
 
-    B = ...
+    B = np.sum(A, axis=2)
 
-    # T0 - DO: Show the locations of all non-zero entries in this collapsed array overlaid on the input image as red points.
+    # TODO: Show the locations of all non-zero entries in this collapsed array overlaid on the input image as red points.
 
     # Check out np.nonzero()
-    [y, x] = ...
+    y, x = np.nonzero(B)
 
     plt.figure()
     plt.imshow(I, cmap='jet')
     plt.scatter(x, y, marker='.', color=scatter_col, s=scatter_size)
     plt.xlim([0, I.shape[1]])
     plt.ylim([0, I.shape[0]])
-    plt.grid(b=False)
+    # plt.grid(bottom=False)
     plt.title('Rough blob centers detected in the image')
     plt.show()
 
     # =========== 3. Refine the blob centers using Li thresholding ===========
 
-    # Apply Gaussian filtering using skimage.filters.gaussian with a suitably chosen sigma and convert to unit8
+    # Apply Gaussian filtering using skimage.filters.gaussian with a suitably chosen sigma and convert to unit8
     J = img_as_ubyte(J)
 
-    # TO - DO: Apply Li thresholding on the blurred image using filters.threshold_li to obtain the optimal threshold for this image
+    # TODO: Apply Li thresholding on the blurred image using filters.threshold_li to obtain the optimal threshold for this image
     threshold = ...
 
-    # TO - DO: Remove all minima in the output image (B) of "Obtain a rough estimate of blob locations" (Part 1, q2) where pixel values 
+    # TODO: Remove all minima in the output image (B) of "Obtain a rough estimate of blob locations" (Part 1, q2) where pixel values
     #          are less than the obtained threshold. Assign this output to variable final
 
     final = ...
@@ -159,11 +158,11 @@ def part1():
 
 def getSmallestNeighborIndex(img, row, col):
     """
-    Parameters : 
+    Parameters :
     img            - image
     row            - row index of pixel
     col            - col index of pixel
-    
+
     Returns         :  The location of the smallest 4-connected neighbour of pixel at location [row,col]
 
     """
@@ -191,12 +190,12 @@ def getSmallestNeighborIndex(img, row, col):
 # TO - DO: Complete the function is_4connected
 def is_4connected(row, col, row_id, col_id):
     """
-    Parameters : 
+    Parameters :
     row            - row index of pixel
     col            - col index of pixel
     row_id         - row index of neighbour pixel
     col_id         - col index of neighbour pixel
-    
+
     Returns         :  Boolean. Whether pixel at location [row_id, col_id] is a 4 connected neighbour of pixel at location [row, col]
 
     """
@@ -217,11 +216,11 @@ def getRegionalMinima(img):
 # TO - DO: Complete the function iterativeMinFollowing
 def iterativeMinFollowing(img, markers):
     """
-    Parameters : 
+    Parameters :
     img          - image
     markers      - returned from function getRegionalMinima(img)
 
-    
+
     Returns       :  final labels (markers_copy)
 
     """
@@ -242,13 +241,13 @@ def iterativeMinFollowing(img, markers):
 
                 pass
 
-        # NOTE!!: Please make sure to comment the below two print statements and i+=1 before submitting. 
+        # NOTE!!: Please make sure to comment the below two print statements and i+=1 before submitting.
         # Feel free to un-comment them while working on the assignment and observing how iterativeMinFollowing works
         # print(f"labels after iteration {i}:")
         # print(markers_copy)
         # i+=1
 
-        print('n_unmarked_pix: ', n_unmarked_pix)
+        # print('n_unmarked_pix: ', n_unmarked_pix)
 
     return markers_copy
 

@@ -1,19 +1,11 @@
 import numpy as np
 
-# Create a 3D numpy array of shape (3, 4, 5)
-a = np.arange(60).reshape((3, 4, 5))
+# Create a sample 3D array with shape (2, 2, 2)
+arr_3d = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
 
-# Slice along the first dimension, taking the first two "pages" of the array
-b = a[0:2, :, :]
+# Collapse the array along the z-axis (axis=2) into a 2D array
+arr_2d = np.sum(arr_3d, axis=1)
 
-# Slice along the second dimension, taking the second and third "columns" of the array
-c = a[:, 1:3, :]
-
-# Slice along the third dimension, taking every other "slice" of the array
-d = a[:, :, 1]
-
-# Print the original and sliced arrays
-print("Original array:\n", a)
-print("Sliced array (first dimension):\n", b)
-print("Sliced array (second dimension):\n", c)
-print("Sliced array (third dimension):\n", d)
+# Print the original and collapsed arrays
+print("Original 3D array:\n", arr_3d)
+print("Collapsed 2D array:\n", arr_2d)
