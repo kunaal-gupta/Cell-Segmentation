@@ -9,6 +9,7 @@ import math
 import cv2
 from skimage.measure import find_contours
 
+
 # ======== DO NOT EDIT imreconstruct =========
 def imreconstruct(marker, mask):
     curr_marker = (np.copy(marker)).astype(mask.dtype)
@@ -21,7 +22,6 @@ def imreconstruct(marker, mask):
             return curr_marker
         curr_marker = np.copy(next_marker)
     return curr_marker
-
 
 
 # ======== DO NOT EDIT imimposemin =========
@@ -45,52 +45,50 @@ def imimposemin(marker, mask):
         np.invert(fm.astype(np.uint8)), np.invert(g.astype(np.uint8))
     ).astype(np.uint8))
 
+
 # -----------------------------PART 1 -----------------------------
 
 def part1():
-    
     imfile = 'nuclei.png'
     I = io.imread(imfile)
 
-    #apply gaussian filter
+    # apply gaussian filter
     sig = 2.5
 
     J = filters.gaussian(I, sig)
 
-    #Plotting Input image and Blurred image
-    plt.figure(figsize=(10,8))
-    plt.subplot(121),plt.imshow(I,cmap='jet'), plt.title('Input Image'), plt.grid(False)
-    plt.subplot(122),plt.imshow(J,cmap='jet'),plt.title('Blurred Image'),plt.grid(False)
+    # Plotting Input image and Blurred image
+    plt.figure(figsize=(10, 8))
+    plt.subplot(121), plt.imshow(I, cmap='jet'), plt.title('Input Image'), plt.grid(False)
+    plt.subplot(122), plt.imshow(J, cmap='jet'), plt.title('Blurred Image'), plt.grid(False)
     plt.show()
 
-
     # =========== 1. Create DoG volume ===========
-    # In the list 'sigmas', 4 values of sigmas (in order) have been provided. You have to use these to create 3 DoG levels. 
+    # In the list 'sigmas', 4 values of sigmas (in order) have been provided. You have to use these to create 3 DoG levels.
     # Level 1 --> gaussian(J, first sigma value) - gaussian(J, second sigma value)
-    # Level 2 --> gaussian(J,second sigma value) - gaussian(J, third sigma value) 
-    # Level 3 ---> gaussian(J,third sigma value) - gaussian(J, fourth sigma value) 
+    # Level 2 --> gaussian(J,second sigma value) - gaussian(J, third sigma value)
+    # Level 3 ---> gaussian(J,third sigma value) - gaussian(J, fourth sigma value)
     # You can use filters.gaussian. You CANNOT use skimage.filters.difference_of_gaussians.
     # Each level should be saved in the corresponding index of variable DoG
 
-
-    sigmas = [1.6 ** i for i in range(1,5)]
+    sigmas = [1.6 ** i for i in range(1, 5)]
     [h, w] = I.shape
     DoG = np.zeros([h, w, 3])
 
-    #TO - DO: Create DoG levels
-    # ...
+    # TO - DO: Create DoG levels
+    DoG[:, :, 0] = filters.gaussian(I, sigmas[0]) - filters.gaussian(I, sigmas[1])
+    DoG[:, :, 1] = filters.gaussian(I, sigmas[1]) - filters.gaussian(I, sigmas[2])
+    DoG[:, :, 2] = filters.gaussian(I, sigmas[2]) - filters.gaussian(I, sigmas[3])
 
-
-    #Plotting
+    # Plotting
     level1 = DoG[:, :, 0]
     level2 = DoG[:, :, 1]
     level3 = DoG[:, :, 2]
 
-
     plt.figure()
-    plt.subplot(131), plt.grid(False), plt.imshow(level1,cmap='jet'), plt.title('Level 1')
-    plt.subplot(132), plt.grid(False), plt.imshow(level2,cmap='jet'), plt.title('Level 2')
-    plt.subplot(133), plt.grid(False), plt.imshow(level3,cmap='jet'), plt.title('Level 3')
+    plt.subplot(131), plt.grid(False), plt.imshow(level1, cmap='jet'), plt.title('Level 1')
+    plt.subplot(132), plt.grid(False), plt.imshow(level2, cmap='jet'), plt.title('Level 2')
+    plt.subplot(133), plt.grid(False), plt.imshow(level3, cmap='jet'), plt.title('Level 3')
     plt.show()
 
     # =========== 2. Obtain a rough estimate of blob center locations ===========
@@ -101,18 +99,16 @@ def part1():
 
     local_minima = ...
 
-
-    #Plot
+    # Plot
     plt.figure()
-    plt.subplot(131), plt.imshow(local_minima[..., 0],cmap='jet')
-    plt.subplot(132), plt.imshow(local_minima[..., 1],cmap='jet')
-    plt.subplot(133), plt.imshow(local_minima[..., 2],cmap='jet')
+    plt.subplot(131), plt.imshow(local_minima[..., 0], cmap='jet')
+    plt.subplot(132), plt.imshow(local_minima[..., 1], cmap='jet')
+    plt.subplot(133), plt.imshow(local_minima[..., 2], cmap='jet')
     plt.show()
 
     # TO - DO: Convert local_minima to a binary image A (Check the stackoverflow discussion linked on e-class for reference)
 
     A = ...
-
 
     # TO - DO: Collapse this 3D binary image into a single channel image and assign to variable B (Check out np.sum)
 
@@ -121,17 +117,16 @@ def part1():
     # T0 - DO: Show the locations of all non-zero entries in this collapsed array overlaid on the input image as red points.
 
     # Check out np.nonzero()
-    [y,x] = ...
+    [y, x] = ...
 
     plt.figure()
-    plt.imshow(I,cmap='jet')
+    plt.imshow(I, cmap='jet')
     plt.scatter(x, y, marker='.', color=scatter_col, s=scatter_size)
     plt.xlim([0, I.shape[1]])
     plt.ylim([0, I.shape[0]])
     plt.grid(b=False)
     plt.title('Rough blob centers detected in the image')
     plt.show()
-
 
     # =========== 3. Refine the blob centers using Li thresholding ===========
 
@@ -146,11 +141,10 @@ def part1():
 
     final = ...
 
-
     # TO - DO: Show the remaining minima locations overlaid on the input image as red points. Once again, you can use np.nonzero()
     [y, x] = ...
 
-    plt.imshow(I,cmap='jet')
+    plt.imshow(I, cmap='jet')
     plt.scatter(x, y, marker='.', color=scatter_col, s=scatter_size)
     plt.xlim([0, I.shape[1]])
     plt.ylim([0, I.shape[0]])
@@ -158,8 +152,8 @@ def part1():
     plt.title('Refined blob centers detected in the image')
     plt.show()
 
-
     return final
+
 
 # ----------------------------- PART 2 -----------------------------
 
@@ -187,16 +181,15 @@ def getSmallestNeighborIndex(img, row, col):
             if row_id == row and col_id == col:
                 continue
             if is_4connected(row, col, row_id, col_id):
-              if img[row_id, col_id] < min_val:
-                  min_row_id = row_id
-                  min_col_id = col_id
-                  min_val = img[row_id, col_id]     
+                if img[row_id, col_id] < min_val:
+                    min_row_id = row_id
+                    min_col_id = col_id
+                    min_val = img[row_id, col_id]
     return min_row_id, min_col_id
 
 
 # TO - DO: Complete the function is_4connected
 def is_4connected(row, col, row_id, col_id):
-
     """
     Parameters : 
     row            - row index of pixel
@@ -215,15 +208,14 @@ def is_4connected(row, col, row_id, col_id):
 def getRegionalMinima(img):
     markers = np.zeros(img.shape, dtype=np.int32)
     h, w = img.shape
-    
-    #Your code here
 
+    # Your code here
 
     return markers
 
+
 # TO - DO: Complete the function iterativeMinFollowing
 def iterativeMinFollowing(img, markers):
-
     """
     Parameters : 
     img          - image
@@ -235,53 +227,49 @@ def iterativeMinFollowing(img, markers):
     """
     markers_copy = np.copy(markers)
     h, w = img.shape
-    
+
     # i here is for printing iteration
-    #i=1
-    
+    # i=1
+
     while True:
 
-        #Number of pixels unmarked (label value is still 0)
+        # Number of pixels unmarked (label value is still 0)
         n_unmarked_pix = 0
-        
+
         for row in range(h):
             for col in range(w):
-                
-                #Your code here
+                # Your code here
 
                 pass
-        
-        
+
         # NOTE!!: Please make sure to comment the below two print statements and i+=1 before submitting. 
-        #Feel free to un-comment them while working on the assignment and observing how iterativeMinFollowing works
-        #print(f"labels after iteration {i}:")
-        #print(markers_copy)
-        #i+=1
-        
+        # Feel free to un-comment them while working on the assignment and observing how iterativeMinFollowing works
+        # print(f"labels after iteration {i}:")
+        # print(markers_copy)
+        # i+=1
+
         print('n_unmarked_pix: ', n_unmarked_pix)
-        
+
     return markers_copy
 
 
 def part2(final):
-
     # Implement Minimum Following watershed segmentation to find the boundaries of the cells we detected in part 1.
-
 
     # TO - DO: Finish functions is_4connected(row, col, row_id, col_id), getRegionalMinima(img) and iterativeMinFollowing(img, markers)
 
-    
     # =============== DO NOT EDIT ANY OF THE CODE BELOW ===============
 
-    #Test if the functions are working as expected
+    # Test if the functions are working as expected
     test_image = np.loadtxt('A4_test_image.txt')
     print("Test image:")
     print(test_image)
 
-    #Testing getSmallestNeighborIndex. 
+    # Testing getSmallestNeighborIndex.
     print("\nTesting function getSmallestNeighborIndex...")
     [min_row, min_col] = getSmallestNeighborIndex(test_image, 0, 0)
-    print(f"Location of the smallest 4-connected neighbour of pixel at location [0,0] with intensity value {test_image[0,0]}: {[min_row, min_col]} with value {test_image[min_row, min_col]}")
+    print(
+        f"Location of the smallest 4-connected neighbour of pixel at location [0,0] with intensity value {test_image[0, 0]}: {[min_row, min_col]} with value {test_image[min_row, min_col]}")
 
     print("\nTesting function getRegionalMinima...")
     markers = getRegionalMinima(test_image)
@@ -293,7 +281,6 @@ def part2(final):
     print("Final labels:")
     print(labels)
 
-
     # Image reconstruct and draw their boundaries ()
 
     sigma = 2.5
@@ -301,7 +288,7 @@ def part2(final):
     img_gs = io.imread(img_name).astype(np.float32)
 
     img_blurred = cv2.GaussianBlur(img_gs, (int(2 * round(3 * sigma) + 1), int(2 * round(3 * sigma) + 1)), sigma
-                         )#borderType=cv2.BORDER_REPLICATE
+                                   )  # borderType=cv2.BORDER_REPLICATE
 
     [img_grad_y, img_grad_x] = np.gradient(img_blurred)
     img_grad = np.square(img_grad_x) + np.square(img_grad_y)
@@ -313,31 +300,29 @@ def part2(final):
 
     markers = getRegionalMinima(img_grad_min_imposed)
     plt.figure(0)
-    plt.imshow(markers,cmap='jet')
+    plt.imshow(markers, cmap='jet')
     plt.title('markers')
     plt.show()
 
     labels = iterativeMinFollowing(img_grad_min_imposed, np.copy(markers))
     plt.figure(1)
-    plt.imshow(labels,cmap='jet')
+    plt.imshow(labels, cmap='jet')
     plt.title('labels')
     plt.show()
 
-    contours = find_contours(img_grad_min_imposed , 0.8)
+    contours = find_contours(img_grad_min_imposed, 0.8)
 
-    fig,ax=plt.subplots()
+    fig, ax = plt.subplots()
     ax.imshow(img_grad_min_imposed, interpolation='nearest', cmap=plt.cm.gray)
     for n, contour in enumerate(contours):
         ax.plot(contour[:, 1], contour[:, 0], linewidth=2)
-
-
 
     ax.axis('image')
     ax.set_xticks([])
     ax.set_yticks([])
     plt.show()
-    
 
-if __name__  == "__main__":
+
+if __name__ == "__main__":
     final = part1()
     part2(final)
