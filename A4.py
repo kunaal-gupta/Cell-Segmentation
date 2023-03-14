@@ -76,9 +76,9 @@ def part1():
     DoG = np.zeros([h, w, 3])
 
     # TODO: Create DoG levels
-    DoG[:, :, 0] = filters.gaussian(I, sigmas[0]) - filters.gaussian(I, sigmas[1])
-    DoG[:, :, 1] = filters.gaussian(I, sigmas[1]) - filters.gaussian(I, sigmas[2])
-    DoG[:, :, 2] = filters.gaussian(I, sigmas[2]) - filters.gaussian(I, sigmas[3])
+    DoG[:, :, 0] = filters.gaussian(J, sigmas[0]) - filters.gaussian(J, sigmas[1])
+    DoG[:, :, 1] = filters.gaussian(J, sigmas[1]) - filters.gaussian(J, sigmas[2])
+    DoG[:, :, 2] = filters.gaussian(J, sigmas[2]) - filters.gaussian(J, sigmas[3])
 
     # Plotting
     level1 = DoG[:, :, 0]
@@ -92,11 +92,11 @@ def part1():
     plt.show()
 
     # =========== 2. Obtain a rough estimate of blob center locations ===========
-    scatter_size = 27.8
+    scatter_size = 20
     scatter_col = 'r'
 
     # TODO: Detect regional minima within the DoG volume. You can check out scipy.ndimage.filters.minimum_filter.
-    local_minima = scipy.ndimage.minimum_filter(DoG, scatter_size) == DoG
+    local_minima = scipy.ndimage.minimum_filter(DoG, size=scatter_size)
 
     # Plot
     plt.figure()
@@ -107,7 +107,7 @@ def part1():
 
     # TODO: Convert local_minima to a binary image A (Check the stackoverflow discussion linked on e-class for reference)
 
-    A = img_as_ubyte(local_minima)
+    A = local_minima == DoG
 
     # TODO: Collapse this 3D binary image into a single channel image and assign to variable B (Check out np.sum)
 
@@ -133,21 +133,22 @@ def part1():
     J = img_as_ubyte(J)
 
     # TODO: Apply Li thresholding on the blurred image using filters.threshold_li to obtain the optimal threshold for this image
-    threshold = ...
+    threshold = filters.threshold_li(J)
 
     # TODO: Remove all minima in the output image (B) of "Obtain a rough estimate of blob locations" (Part 1, q2) where pixel values
     #          are less than the obtained threshold. Assign this output to variable final
 
-    final = ...
+    final = np.copy(B)
+    final[final < threshold] = 0
 
-    # TO - DO: Show the remaining minima locations overlaid on the input image as red points. Once again, you can use np.nonzero()
-    [y, x] = ...
+    # TODO: Show the remaining minima locations overlaid on the input image as red points. Once again, you can use np.nonzero()
+    [y, x] = np.nonzero(final)
 
     plt.imshow(I, cmap='jet')
     plt.scatter(x, y, marker='.', color=scatter_col, s=scatter_size)
     plt.xlim([0, I.shape[1]])
     plt.ylim([0, I.shape[0]])
-    plt.grid(b=False)
+    # plt.grid(b=False)
     plt.title('Refined blob centers detected in the image')
     plt.show()
 
