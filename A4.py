@@ -7,6 +7,8 @@ from scipy.signal import convolve2d as conv2
 import scipy.ndimage
 import math
 import cv2
+from skimage.filters import threshold_otsu
+
 from skimage.measure import find_contours
 
 
@@ -138,8 +140,9 @@ def part1():
     # TODO: Remove all minima in the output image (B) of "Obtain a rough estimate of blob locations" (Part 1, q2) where pixel values
     #          are less than the obtained threshold. Assign this output to variable final
 
+    # final = I > threshold
     final = np.copy(B)
-    final[final < threshold] = 0
+    final[I < threshold] = 0
 
     # TODO: Show the remaining minima locations overlaid on the input image as red points. Once again, you can use np.nonzero()
     [y, x] = np.nonzero(final)
