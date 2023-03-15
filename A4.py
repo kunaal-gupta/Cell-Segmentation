@@ -204,15 +204,31 @@ def is_4connected(row, col, row_id, col_id):
 
     """
 
-    pass
+    flag = False
+
+    if col == col_id:
+        if row + 1 == row_id or row - 1 == row_id:
+            flag = True
+    elif row == row_id:
+        if col + 1 == col_id or col - 1 == col_id:
+            flag = True
+
+    return flag
 
 
 # TO - DO: Complete the function getRegionalMinima
 def getRegionalMinima(img):
     markers = np.zeros(img.shape, dtype=np.int32)
     h, w = img.shape
+    num = 1
 
-    # Your code here
+    for row in range(h):
+        for col in range(w):
+            value = getSmallestNeighborIndex(img, row, col)
+
+            if (img[value[0], value[1]]) >= (img[row, col]):
+                markers[row, col] = num
+                num += 1
 
     return markers
 
@@ -241,17 +257,24 @@ def iterativeMinFollowing(img, markers):
 
         for row in range(h):
             for col in range(w):
-                # Your code here
 
-                pass
+                if markers_copy[row, col] == 0:
+                    value = getSmallestNeighborIndex(img, row, col)
+                    if not(markers_copy[value[0]][value[1]] == 0):
+                        markers_copy[row, col] = markers_copy[value[0]][value[1]]
+
+                    else:
+                        n_unmarked_pix = n_unmarked_pix + 1
+                    # Your code here
 
         # NOTE!!: Please make sure to comment the below two print statements and i+=1 before submitting.
         # Feel free to un-comment them while working on the assignment and observing how iterativeMinFollowing works
         # print(f"labels after iteration {i}:")
         # print(markers_copy)
         # i+=1
-
         # print('n_unmarked_pix: ', n_unmarked_pix)
+        if not(n_unmarked_pix != 0):
+            break
 
     return markers_copy
 
